@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Overboard — Multiplayer Chess</title>
+  <link rel="stylesheet" href="/vendor/chessboard.min.css">
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <div class="shell">
+    <header class="top">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">♞</span>
+        <div>
+          <h1>Overboard</h1>
+          <p class="tagline">Two players, one room, live chess</p>
+        </div>
+      </div>
+      <div id="connStatus" class="conn" data-state="connecting">Connecting</div>
+    </header>
+
+    <section id="lobby" class="panel lobby">
+      <h2>Start a match</h2>
+      <p class="lede">Create a room and send the code to a friend, or join with a code they shared.</p>
+      <div class="lobby-actions">
+        <button id="createBtn" type="button" class="btn primary">Create room</button>
+        <div class="join-row">
+          <input id="roomInput" type="text" maxlength="8" autocomplete="off" spellcheck="false" placeholder="Room code" aria-label="Room code">
+          <button id="joinBtn" type="button" class="btn">Join</button>
+        </div>
+      </div>
+      <p id="lobbyError" class="error" hidden></p>
+    </section>
+
+    <section id="game" class="game hidden" hidden>
+      <div class="game-bar">
+        <div class="room-chip">
+          <span class="label">Room</span>
+          <strong id="roomCodeLabel"></strong>
+          <button id="copyBtn" type="button" class="btn ghost">Copy link</button>
+        </div>
+        <div id="turnBanner" class="turn-banner waiting">Waiting for opponent</div>
+        <button id="leaveBtn" type="button" class="btn ghost">Leave</button>
+      </div>
+
+      <div class="game-layout">
+        <aside class="rail rail-top">
+          <div class="player-card">
+            <div class="player-meta">
+              <span id="oppLabel" class="who">Opponent</span>
+              <span id="oppConn" class="dot" data-state="waiting">Waiting</span>
+            </div>
+            <div id="capturedOpp" class="captured" aria-label="Pieces you captured"></div>
+          </div>
+        </aside>
+
+        <div class="board-column">
+          <div id="board"></div>
+        </div>
+
+        <aside class="rail rail-side">
+          <div class="player-card you">
+            <div class="player-meta">
+              <span id="youLabel" class="who">You</span>
+              <span id="youColor" class="color-pill">White</span>
+            </div>
+            <div id="capturedYou" class="captured" aria-label="Pieces opponent captured"></div>
+          </div>
+          <div class="history-card">
+            <h3>Moves</h3>
+            <ol id="historyList" class="history"></ol>
+          </div>
+        </aside>
+      </div>
+    </section>
+  </div>
+
+  <div id="reconnectBanner" class="float-banner hidden" hidden>Reconnecting…</div>
+
+  <div id="resultModal" class="modal hidden" hidden>
+    <div class="modal-card">
+      <h2 id="resultTitle">Game over</h2>
+      <p id="resultBody"></p>
+      <button id="resultLeaveBtn" type="button" class="btn primary">Back to lobby</button>
+    </div>
+  </div>
+
+  <div id="promoModal" class="modal hidden" hidden>
+    <div class="modal-card promo-card">
+      <h2>Promote pawn</h2>
+      <div id="promoChoices" class="promo-choices"></div>
+      <button id="promoCancel" type="button" class="btn ghost">Cancel</button>
+    </div>
+  </div>
+
+  <script src="/vendor/jquery.min.js"></script>
+  <script src="/vendor/chessboard.min.js"></script>
+  <script src="/client.js"></script>
+</body>
+</html>
