@@ -37,8 +37,9 @@
       <div class="game-bar">
         <div class="room-chip">
           <span class="label">Room</span>
-          <strong id="roomCodeLabel"></strong>
+          <input id="roomCodeLabel" class="room-code-field" type="text" readonly spellcheck="false" aria-label="Room code">
           <button id="copyBtn" type="button" class="btn ghost">Copy link</button>
+          <textarea id="copyCarrier" class="copy-carrier" readonly tabindex="-1" aria-hidden="true"></textarea>
         </div>
         <div id="turnBanner" class="turn-banner waiting">Waiting for opponent</div>
         <button id="leaveBtn" type="button" class="btn ghost">Leave</button>

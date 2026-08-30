@@ -16,6 +16,7 @@
     connStatus: document.getElementById('connStatus'),
     roomCodeLabel: document.getElementById('roomCodeLabel'),
     copyBtn: document.getElementById('copyBtn'),
+    copyCarrier: document.getElementById('copyCarrier'),
     leaveBtn: document.getElementById('leaveBtn'),
     turnBanner: document.getElementById('turnBanner'),
     oppLabel: document.getElementById('oppLabel'),
@@ -330,7 +331,7 @@
   function showGameView() {
     hide(els.lobby);
     show(els.game);
-    els.roomCodeLabel.textContent = state.roomCode || '';
+    els.roomCodeLabel.value = state.roomCode || '';
     els.youColor.textContent = state.color === 'black' ? 'Black' : 'White';
     els.youLabel.textContent = 'You';
     els.oppLabel.textContent = 'Opponent';
@@ -588,19 +589,78 @@
     if (event.key === 'Enter') els.joinBtn.click();
   });
 
-  els.copyBtn.addEventListener('click', async () => {
-    const url = `${location.origin}/?room=${encodeURIComponent(state.roomCode || '')}`;
+  function inviteUrl() {
+    return `${location.origin}/?room=${encodeURIComponent(state.roomCode || '')}`;
+  }
+
+  function copyWithCarrier(text) {
+    const carrier = els.copyCarrier;
+    if (!carrier) return false;
+    carrier.value = text;
+    carrier.removeAttribute('aria-hidden');
+    carrier.style.position = 'fixed';
+    carrier.style.left = '0';
+    carrier.style.top = '0';
+    carrier.style.opacity = '1';
+    carrier.style.width = '2px';
+    carrier.style.height = '2px';
+    carrier.focus();
+    carrier.select();
+    carrier.setSelectionRange(0, text.length);
+    let ok = false;
     try {
-      await navigator.clipboard.writeText(url);
+      ok = document.execCommand('copy');
+    } catch {
+      ok = false;
+    }
+    carrier.setAttribute('aria-hidden', 'true');
+    carrier.style.opacity = '0';
+    carrier.blur();
+    els.copyBtn.focus();
+    return ok;
+  }
+
+  async function copyInviteLink() {
+    const url = inviteUrl();
+    if (!state.roomCode) return;
+
+    let copied = false;
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      try {
+        await Promise.race([
+          navigator.clipboard.writeText(url),
+          new Promise((_, reject) => setTimeout(() => reject(new Error('timeout')), 400)),
+        ]);
+        copied = true;
+      } catch {
+        copied = false;
+      }
+    }
+    if (!copied) copied = copyWithCarrier(url);
+
+    if (copied) {
       els.copyBtn.textContent = 'Copied';
       setTimeout(() => {
         els.copyBtn.textContent = 'Copy link';
       }, 1400);
-    } catch {
-      window.prompt('Copy this link', url);
+      return;
     }
-  });
 
+    els.roomCodeLabel.focus();
+    els.roomCodeLabel.select();
+    els.copyBtn.textContent = 'Select & copy';
+    setTimeout(() => {
+      els.copyBtn.textContent = 'Copy link';
+    }, 1800);
+  }
+
+  els.copyBtn.addEventListener('click', (event) => {
+    event.preventDefault();
+    copyInviteLink();
+  });
+  els.roomCodeLabel.addEventListener('click', () => {
+    els.roomCodeLabel.select();
+  });
   els.leaveBtn.addEventListener('click', leaveGame);
   els.resultLeaveBtn.addEventListener('click', leaveGame);
   els.promoCancel.addEventListener('click', cancelPromotion);
