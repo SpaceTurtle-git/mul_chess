@@ -287,6 +287,7 @@ input[type="text"]:focus {
   max-width: 540px;
   margin: 0 auto;
   user-select: none;
+  touch-action: none;
 }
 
 .white-1e1d7 {
@@ -301,8 +302,18 @@ input[type="text"]:focus {
   cursor: pointer;
 }
 
-#board .piece-417db {
+#board .square-55d63.dragging-from .piece-417db {
+  opacity: 0.35;
+}
+
+.drag-ghost {
+  position: fixed;
+  left: 0;
+  top: 0;
+  transform: translate(-50%, -50%);
   pointer-events: none;
+  z-index: 80;
+  filter: drop-shadow(0 8px 12px rgba(0, 0, 0, 0.45));
 }
 
 #board .square-55d63.last-move {
